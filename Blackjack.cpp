@@ -14,25 +14,29 @@
 using namespace std;
 
 class Card {
-    int type;
-    char* suit;
+    int value;    //The card's numerical value
+    char* type;  //The card's type (1, 2.. Ace).
+    char* suit;  //The card's suit
 
     public:
         void generate() {
-        //    suit = "Jack";
-            type = rand() % 11 + 1; //rand from 1 to 11.
+        //
+           value = rand() % 11 + 1; //rand from 1 to 11.
     //        cout << "type: " << type << "\n";
-            if (type == 10) {
-                int face = rand() % 3;  //rand from 0 to 2.
+            if (value == 10) {
+                int face = rand() % 4;  //rand from 0 to 2.
                 switch(face) {
                     case 0:
-                        suit = "Jack";
+                        type = "Jack";
                         break;
                     case 1:
-                        suit = "Queen";
+                        type = "Queen";
                         break;
                     case 2: 
-                        suit = "King";
+                        type = "King";
+                        break;
+                    case 3:
+                        type = "Ten";
                         break;
                     default:
                         cout << "Error";
@@ -40,13 +44,48 @@ class Card {
             
      //       cout << "suit: " << suit << "\n";         
             }
-            else if (type == 11) {
-                suit = "Ace";
+            else if (value == 11) {
+                type = "Ace";
             }
-   
+            else {
+                switch(value) {
+                    case 1:
+                        type = "One";
+                        break;
+                    case 2:
+                        type = "Two";
+                        break;
+                    case 3:
+                        type = "Three";
+                        break;
+                    case 4:
+                        type = "Four";
+                        break;
+                    case 5:
+                        type = "Five";
+                        break;
+                    case 6:
+                        type = "Six";
+                        break;
+                    case 7:
+                        type = "Seven";
+                        break;
+                    case 8:
+                        type = "Eight";
+                        break;
+                    case 9:
+                        type = "Nine";
+                        break;
+                    default:
+                        cout << "Error";
+                }
+            }
         }
         
-        int getType() {
+        int getValue() {
+            return value;
+        }
+        char* getType() {
             return type;
         }
         char* getSuit() {
@@ -79,7 +118,9 @@ int main(int argc, char** argv) {
     c1.generate();
     c2.generate();
     c1.showCard();
+    cout << "value1: " << c1.getValue() << "\n";
     c2.showCard();
+    cout << "value2: " << c2.getValue() << "\n";
 
     cout << "Please Enter an option: (H)it, (S)tay, (Q)uit...\n";
     return 0;
