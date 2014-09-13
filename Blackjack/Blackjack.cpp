@@ -15,23 +15,28 @@
 
 using namespace std; 
 
+void gameStart() {
+    srand(time(NULL));  //To generate unique cards.
+    cout << "Welcome to BlackJack!\n";
+    cout << "Here are your cards: \n";
+};
 
 /*
  * 
  */
 int main(int argc, char** argv) {
-    srand(time(NULL));  //To generate unique cards.
-    cout << "Welcome to BlackJack!\n";
-    cout << "Here are your cards: \n";
+ //   srand(time(NULL));  //To generate unique cards.
+ //   cout << "Welcome to BlackJack!\n";
+ //   cout << "Here are your cards: \n";
     Card c1;
     Card c2;
+    gameStart();
     c1.generate();
     c2.generate();
+    cout << "\n";  //generate new line
     c1.showCard();
-    cout << "value1: " << c1.getValue() << "\n";
     c2.showCard();
-    cout << "value2: " << c2.getValue() << "\n";
-
+    cout << "\n";   //generate new line
     cout << "Please Enter an option: (H)it, (S)tay, (Q)uit...\n";
     return 0;
 }
