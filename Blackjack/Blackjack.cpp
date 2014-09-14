@@ -11,7 +11,7 @@
 #include <time.h>
 #include <string.h>
 #include "Card.h"
-#include "Deck.h"
+#include "Money.h"
 
 using namespace std; 
 
@@ -21,6 +21,7 @@ void gameStart() {
         srand(time(NULL));  //To generate unique cards.
         cout << "Welcome to BlackJack!\n";
         cout << "Here are your cards: \n";
+        Money wal(100);
         Card c1;
         Card c2;
         c1.generate();
@@ -29,17 +30,19 @@ void gameStart() {
         c1.showCard();
         c2.showCard();
         cout << "\n";   //generate new line
+        cout << "Your current money: \n";
+        wal.showMoney();
         cout << "Please Enter an option: (1)Hit, (2)Stay, (3)Quit...\n"; 
         cin >> choice;
     }
 };
+
 
 /*
  * 
  */
 int main(int argc, char** argv) {
     gameStart();
-
     return 0;
 }
 
