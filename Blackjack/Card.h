@@ -3,6 +3,7 @@
  * Author: CHRISHOME
  *
  * Created on September 11, 2014, 5:19 PM
+ * Includes constructors and methods to create a playing card with a random value.
  */
 
 #ifndef CARD_H
