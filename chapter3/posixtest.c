@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
         return 1;
       }
     
-    argc -= opind;
+    argc -= optind;
     argv += optind;
     
     if (thick)
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
       
     puts("Ingredients:");
     
-    for (count=0; count<argc; c++)
+    for (count=0; count<argc; count++)
       puts(argv[count]);
     return 0;
 }
