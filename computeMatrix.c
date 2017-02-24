@@ -4,7 +4,7 @@
 
 /* Function Definitions */
 float * readInputFile(int n, char* test_file);
-float ** calculateMatrix(int c, int n, float* input_file);
+void calculateMatrix(int c, int n, float* input_file);
 
 int main(int argc, char* argv[])
 {
@@ -32,16 +32,17 @@ int main(int argc, char* argv[])
 /* Compute the matrix operation */
   I = readInputFile(n, argv[argc-1]);
 //  printf("first: %f, last: %f\n", I[0], I[299]);
-  float** result = calculateMatrix(c, n, I);
-
-/* Print the resulting CxC matrix */
+  //float** result = calculateMatrix(c, n, I);
+  calculateMatrix(c, n, I);
+/* Print the resulting CxC matrix
   for (int i=0; i < c+1; i++) {
     for (int j=0; j < c+1; j++) {
         printf("%f   ", result[i][j]);
     }
     printf("\n");
-  }
+  }*/
 
+  //free(result);
   return 0;
 }
 
@@ -73,20 +74,39 @@ float * readInputFile(int n, char* test_file)
 }
 
 /* Function to calculate the matrix */
-float ** calculateMatrix(int c, int n, float* input_file)
+void calculateMatrix(int c, int n, float* input_file)
 {
+  for (int i=0; i < n; i++)
+    printf("input_data: %f\n", input_file[i]);
+
+  //printf("first: %f, last: %f\n", input_file[0], input_file[n-1]);
   //float output[c+1][c+1];//float** output= float*[c+1];
-  float **output = malloc((c+1)*sizeof( float* ));
-  for (int e=0; e<c+1; e++)
-    output[e] = malloc((c+1)*sizeof( float* ));
+  float **output = (float **)malloc(c * sizeof(float *));// = malloc(c*sizeof( float* ));
+  for (int e=0; e<c+1; e++) {
+    output[e] = (float *)malloc(c * sizeof(float));
+  //  printf("out: %f", output[e][0]);
+  }
   /*for (int p=0; p<=c; p++) {
     output[p] = float[c+1];
   }*/
   for (int k=0; k <= c; k++) {
     for (int j=0; j <= c; j++) {
-      for (int i=c; i < n; i++)
+      for (int i=c; i < n; i++) {
+    //    printf("Prior OUTPUT: %f, k%i,j%i\n", output[k][j], k, j);
         output[k][j] += input_file[i-k] * input_file[i-j];
+      }
+  //    printf("output: %f, [k]: %i, [j]: %i\n", output[k][j], k, j);
     }
   }
-  return output;
+  printf("END OF TEST\n");
+  /* Print the resulting CxC matrix */
+    for (int i=0; i < c+1; i++) {
+      for (int j=0; j < c+1; j++) {
+          printf("%f   ", output[i][j]);
+      }
+      free(output[i]);
+      printf("\n");
+    }
+    free(output);
+  //return output;
 }
