@@ -563,7 +563,7 @@ def slam(data, N, num_landmarks, motion_noise, measurement_noise):
 def online_slam(data, N, num_landmarks, motion_noise, measurement_noise):
     #
 
-    dim = 2 * (N + num_landmarks)
+    dim = 2 * (1 + num_landmarks)
 
     # Create inital Omega and Xi matricies
     Omega = matrix()
@@ -580,9 +580,6 @@ def online_slam(data, N, num_landmarks, motion_noise, measurement_noise):
 
     for k in range(len(data)):
 
-        # n is the index of the robot pose in the matrix/vector
-        n = k * 2
-
         measurement = data[k][0]
         motion      = data[k][1]
 
@@ -590,47 +587,46 @@ def online_slam(data, N, num_landmarks, motion_noise, measurement_noise):
         for i in range(len(measurement)):
 
             # m is the index of the landmark coordinate in the matrix/vector
-            m = 2 * (N + measurement[i][0])
+            m = 2 * (1 + measurement[i][0])
 
             # update the information maxtrix/vector based on the measurement
             for b in range(2):
-                Omega.value[n+b][n+b] +=  1.0 / measurement_noise
+                Omega.value[b][b]     +=  1.0 / measurement_noise
                 Omega.value[m+b][m+b] +=  1.0 / measurement_noise
-                Omega.value[n+b][m+b] += -1.0 / measurement_noise
-                Omega.value[m+b][n+b] += -1.0 / measurement_noise
-                Xi.value[n+b][0]      += -measurement[i][1+b] / measurement_noise
+                Omega.value[b][m+b]   += -1.0 / measurement_noise
+                Omega.value[m+b][b]   += -1.0 / measurement_noise
+                Xi.value[b][0]        += -measurement[i][1+b] / measurement_noise
                 Xi.value[m+b][0]      +=  measurement[i][1+b] / measurement_noise
 
         # Add two new rows/cols to account for next robot position
+        #Expand() omega and xi to include new motion update.
         list = [0,1] + range(4, dim+2)
         Omega = Omega.expand(dim+2, dim+2, list, list)
         Xi = Xi.expand(dim+2, 1, list, [0])
-        
+
         # update the information maxtrix/vector based on the robot motion
         for b in range(4):
-            Omega.value[n+b][n+b] +=  1.0 / motion_noise
+            Omega.value[b][b] +=  1.0 / motion_noise
         for b in range(2):
-            Omega.value[n+b  ][n+b+2] += -1.0 / motion_noise
-            Omega.value[n+b+2][n+b  ] += -1.0 / motion_noise
-            Xi.value[n+b  ][0]        += -motion[b] / motion_noise
-            Xi.value[n+b+2][0]        +=  motion[b] / motion_noise
-    print "HJERE"
-    Omega.show()
-    print "XIIIII"
-    Xi.show()
-    print "ENDHere"
-    #Expand() omega and xi to include new motion update.
+            Omega.value[b  ][b+2] += -1.0 / motion_noise
+            Omega.value[b+2][b  ] += -1.0 / motion_noise
+            Xi.value[b  ][0]        += -motion[b] / motion_noise
+            Xi.value[b+2][0]        +=  motion[b] / motion_noise
 
-    #take() omege_prime and xi_prime from expanded matricies
-    Omega_p = Omega.take([2,dim-1], [2,dim-1])
-    Xi_p = Xi.take([2,dim-1], [0])
-    #Identify A, B and C from expanded matricies  (Need x,y)
-    B = Omega.take([0,1], [0,1])
-    A = Omega.take([0,1], [1,dim-1])
-    C = Xi.take([0,1], [0])
+
+    #Get A, B and C from expanded matricies (Need x,y so [0,1] for 2 elements)
+        omega_range = range(2, len(Omega.value))
+        A = Omega.take([0,1], omega_range)
+        B = Omega.take([0,1])
+        C = Xi.take([0,1], [0])
+
+    #take() omega_prime and xi_prime from expanded matricies
+        Omega_p = Omega.take(omega_range)
+        Xi_p = Xi.take(omega_range, [0])
+
     #calculate new omega and xi
-    Omega = Omega_p - A.transpose() * B.inverse() * A
-    Xi = Xi_p - A.transpose() * B.inverse() * C
+        Omega = Omega_p - A.transpose() * B.inverse() * A
+        Xi = Xi_p - A.transpose() * B.inverse() * C
 
     # compute best estimate
     mu = Omega.inverse() * Xi
@@ -670,9 +666,9 @@ distance           = 20.0     # distance by which robot (intends to) move each i
 
 # Uncomment the following three lines to run the full slam routine.
 
-#data = make_data(N, num_landmarks, world_size, measurement_range, motion_noise, measurement_noise, distance)
-#result = slam(data, N, num_landmarks, motion_noise, measurement_noise)
-#print_result(N, num_landmarks, result)
+data = make_data(N, num_landmarks, world_size, measurement_range, motion_noise, measurement_noise, distance)
+result = slam(data, N, num_landmarks, motion_noise, measurement_noise)
+print_result(N, num_landmarks, result)
 
 # Uncomment the following three lines to run the online_slam routine.
 
